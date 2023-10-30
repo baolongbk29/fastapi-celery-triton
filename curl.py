@@ -1,8 +1,9 @@
 import base64
+import io
+
 import cv2
 import numpy as np
 import requests
-import io
 from PIL import Image
 
 URL = "http://localhost:80"

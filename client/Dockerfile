@@ -1,6 +1,6 @@
 FROM tiangolo/uvicorn-gunicorn:python3.8
 RUN mkdir -p /app
-WORKDIR /app 
+WORKDIR /app
 
 COPY ./client/requirements.txt /requirements.txt
 

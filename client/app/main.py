@@ -1,13 +1,12 @@
-import yaml
 import base64
+import io
 import time
+
 import cv2
 import numpy as np
-from PIL import Image
-import io
-
 import tritonclient.http as httpclient
-
+import yaml
+from PIL import Image
 
 client = httpclient.InferenceServerClient(url="triton-inference-server:8000")
 with open("data/coco.yaml") as f:
