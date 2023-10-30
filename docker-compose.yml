@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+    triton_server:
+        image: nvcr.io/nvidia/tritonserver:23.06-py3
+        container_name: triton-inference-server
+        command: tritonserver --model-repository=/models
+        volumes:
+          - ./server:/models
+        ports:
+          - 8000:8000 
+          - 8001:8001 
+          - 8002:8002
+    app:
+        container_name: client
+        build:
+            context: .
+            dockerfile: ./client/Dockerfile
+        ports:
+            - "80:80"
+
+networks:
+    default:
+        name: mlops-network
