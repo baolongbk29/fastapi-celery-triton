@@ -6,7 +6,7 @@ import numpy as np
 import requests
 from PIL import Image
 
-URL = "http://localhost:80"
+URL = "http://127.0.0.1:9000/inference"
 
 HEADERS = {
     "accept": "application/json",
@@ -30,9 +30,4 @@ if __name__ == "__main__":
         "img": base64.b64encode(buffer).decode("utf-8"),
     }
     response = requests.post(URL, headers=HEADERS, json=DATA, verify=False)
-    res = response.json()
-    img = res["visualized_img"]
-    pil_image = convert_base64_to_image(img)
-    pil_image.show()
-    print(res["results"])
-    print(res["process_time"])
+    print(response.json())

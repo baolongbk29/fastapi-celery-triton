@@ -7,3 +7,8 @@ tritonclient[all]
 packaging
 fastapi
 seaborn
+celery
+watchdog==2.1.6
+redis   == 4.1.4
+flower  == 1.0.0
+locust  == 2.8.3
