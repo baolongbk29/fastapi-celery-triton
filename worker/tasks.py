@@ -3,13 +3,13 @@ import logging
 import logging.config
 import os
 import time
-
+import base64
 import cv2
 import numpy as np
 import tritonclient.http as httpclient
 from celery import Task
 
-from worker.helpers import convert_base64_to_image, preprocessing
+from worker.helpers import convert_base64_to_image, preprocessing, CLASSES, draw_bounding_box
 
 from .celery import app
 
@@ -72,14 +72,39 @@ def inference_yolov8(img_base64: str):
         result_boxes = cv2.dnn.NMSBoxes(boxes, scores, 0.25, 0.45, 0.5)
         postprocess_end = time.time()
 
+        detections = []
+        for i in range(len(result_boxes)):
+            index = result_boxes[i]
+            box = boxes[index]
+            detection = {
+                "class_id": class_ids[index],
+                "class_name": CLASSES[class_ids[index]],
+                "confidence": scores[index],
+                "box": box,
+                "scale": scale,
+            }
+            detections.append(detection)
+            draw_bounding_box(
+                or_copy,
+                class_ids[index],
+                scores[index],
+                round(box[0] * scale),
+                round(box[1] * scale),
+                round((box[0] + box[2]) * scale),
+                round((box[1] + box[3]) * scale),
+            )
+        visualize_end = time.time()
+
         process_time = {
             "preprocess": preprocess_end - preprocess_start,
             "inference": inference_end - preprocess_end,
             "postprocess": postprocess_end - inference_end,
-            "total": inference_end - preprocess_start,
+            "visualize": visualize_end - postprocess_end,
+            "total": visualize_end - preprocess_start,
         }
+        _, buffer = cv2.imencode(".jpg", or_copy)
 
-        return {"results": result_boxes.tolist(), "process_time": process_time}
+        return {"image_result": base64.b64encode(buffer).decode("utf-8"),"results": result_boxes.tolist(), "process_time": process_time}
     except Exception as e:
         logging.critical(e, exc_info=True)
         return {"results": None, "process_time": {}}

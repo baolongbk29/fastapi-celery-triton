@@ -16,6 +16,7 @@ class ModelPrediction(BaseModel):
     """Final result"""
 
     task_id: str
+    image_result: str
     status: str
     result: list
     process_time: dict

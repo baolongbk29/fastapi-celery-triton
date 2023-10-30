@@ -47,6 +47,7 @@ async def get_inference_result(task_id):
         logger.info(result)
         return {
             "task_id": task_id,
+            "image_result": result["image_result"],
             "status": "Success",
             "result": result["results"],
             "process_time": result["process_time"],

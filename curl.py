@@ -4,6 +4,7 @@ import io
 import cv2
 import numpy as np
 import requests
+import time
 from PIL import Image
 
 URL = "http://127.0.0.1:9000/inference"
@@ -30,4 +31,12 @@ if __name__ == "__main__":
         "img": base64.b64encode(buffer).decode("utf-8"),
     }
     response = requests.post(URL, headers=HEADERS, json=DATA, verify=False)
-    print(response.json())
+    response = response.json()
+
+    print(response)
+    time.sleep(3)
+    results_reponses = requests.get(f"http://127.0.0.1:9000/result/{response['task_id']}")
+    results_reponses = results_reponses.json()
+    print(results_reponses["process_time"])
+    pil_image=convert_base64_to_image(results_reponses["image_result"])
+    pil_image.show()
